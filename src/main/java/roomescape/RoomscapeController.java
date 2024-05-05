@@ -37,7 +37,7 @@ public class RoomscapeController {
 
     @ResponseBody
     @PostMapping("/reservations")
-    public ResponseEntity<Reservation> addReservation(@RequestBody ReservationAddRequest request) {
+    public ResponseEntity<Reservation> addReservation(@RequestBody ReservationCreateRequest request) {
         Reservation newReservation = new Reservation(request.getName(), request.getDate(), request.getTime());
         reservations.register(newReservation);
         return ResponseEntity

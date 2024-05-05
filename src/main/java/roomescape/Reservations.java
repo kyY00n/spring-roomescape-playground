@@ -20,7 +20,8 @@ public class Reservations {
     }
 
     public void cancel(final Long id) {
-        Reservation foundReservation = reservations.stream().filter(reservation -> reservation.getId().equals(id))
+        Reservation foundReservation = reservations.parallelStream()
+                .filter(reservation -> reservation.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundReservationException(id));
         reservations.remove(foundReservation);
