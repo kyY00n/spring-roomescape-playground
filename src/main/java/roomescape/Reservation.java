@@ -9,13 +9,25 @@ public class Reservation {
     private final String date;
     private final String time;
 
-    public Reservation(final String name, final String date, final String time) {
-        if (isEmpty(name) || isEmpty(date) || isEmpty(time)) {
-            throw new IllegalArgumentException("예약 정보를 모두 입력해주세요.");
-        }
+    public Reservation(final Long id, final String name, final String date, final String time) {
+        this.id = id;
+        validate(name, date, time);
         this.name = name;
         this.date = date;
         this.time = time;
+    }
+
+    public Reservation(final String name, final String date, final String time) {
+        validate(name, date, time);
+        this.name = name;
+        this.date = date;
+        this.time = time;
+    }
+
+    private void validate(final String name, final String date, final String time) {
+        if (isEmpty(name) || isEmpty(date) || isEmpty(time)) {
+            throw new IllegalArgumentException("예약 정보를 모두 입력해주세요.");
+        }
     }
 
     public Long getId() {
