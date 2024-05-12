@@ -1,5 +1,7 @@
 package roomescape;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 public class Reservation {
@@ -9,6 +11,7 @@ public class Reservation {
     private final String date;
     private final String time;
 
+    @JsonCreator
     public Reservation(final Long id, final String name, final String date, final String time) {
         this.id = id;
         validate(name, date, time);
