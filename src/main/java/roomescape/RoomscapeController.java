@@ -17,7 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/")
 public class RoomscapeController {
 
-    private final Reservations reservations = new Reservations();
+    private final ReservationDao reservationDao;
+
+    public RoomscapeController(final ReservationDao reservationDao) {
+        this.reservationDao = reservationDao;
+    }
 
     @GetMapping
     public String home() {
@@ -32,14 +36,14 @@ public class RoomscapeController {
     @ResponseBody
     @GetMapping("/reservations")
     public List<Reservation> readAllReservations() {
-        return reservations.getReservations();
+        return reservationDao.selectAll();
     }
 
     @ResponseBody
     @PostMapping("/reservations")
     public ResponseEntity<Reservation> addReservation(@RequestBody ReservationCreateRequest request) {
         Reservation newReservation = new Reservation(request.getName(), request.getDate(), request.getTime());
-        reservations.register(newReservation);
+        reservationDao.insert(newReservation);
         return ResponseEntity
                 .created(URI.create("/reservations/" + newReservation.getId()))
                 .body(newReservation);
@@ -48,7 +52,7 @@ public class RoomscapeController {
     @ResponseBody
     @DeleteMapping("/reservations/{id}")
     public ResponseEntity deleteReservation(@PathVariable Long id) {
-        reservations.cancel(id);
+        reservationDao.delete(id);
         return ResponseEntity.noContent().build();
     }
 
