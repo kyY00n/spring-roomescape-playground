@@ -99,17 +99,16 @@ HTTP/1.1 204 No Content
 
 
 ## 5단계 요구사항
-- [ ] h2 데이터베이스를 활용하여 데이터를 저장하도록 수정하세요.
+- [x] h2 데이터베이스를 활용하여 데이터를 저장하도록 수정하세요.
 
 ### gradle 의존성 추가
 - build.gradle 파일을 이용하여 다음 두 의존성을 추가하세요.
- - [ ] spring-boot-stater-jdbc
- - [ ] h2
+ - [x] spring-boot-stater-jdbc
+ - [x] h2
 
 ### 테이블 스키마 정의
-
-- [ ] 데이터베이스 테이블 생성을 위해 schema.sql 파일을 생성하고 테이블을 생성하는 쿼리를 작성하세요.
+- [x] 데이터베이스 테이블 생성을 위해 schema.sql 파일을 생성하고 테이블을 생성하는 쿼리를 작성하세요.
 
 ### 데이터베이스 설정
-- [ ] h2 데이터베이스의 console 기능을 활성화하세요.
-- [ ] datasource url을 다음과 같이 지정하세요: jdbc:h2:mem:database
+- [x] h2 데이터베이스의 console 기능을 활성화하세요.
+- [x] datasource url을 다음과 같이 지정하세요: jdbc:h2:mem:database
