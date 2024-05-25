@@ -33,6 +33,11 @@ public class RoomscapeController {
         return "reservation";
     }
 
+    @GetMapping("/time")
+    public String time() {
+        return "time";
+    }
+
     @ResponseBody
     @GetMapping("/reservations")
     public List<Reservation> readAllReservations() {
