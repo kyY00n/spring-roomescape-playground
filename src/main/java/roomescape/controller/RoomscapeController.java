@@ -15,7 +15,7 @@ public class RoomscapeController {
 
     @GetMapping("/reservation")
     public String admin() {
-        return "reservation";
+        return "new-reservation";
     }
 
     @GetMapping("/time")
