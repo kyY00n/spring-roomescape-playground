@@ -2,6 +2,7 @@ package roomescape;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -47,10 +48,17 @@ public class MissionStepTest {
 
     @Test
     void 삼단계() {
+        Response timeResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(Map.of("time", "15:40"))
+                .when().post("/times");
+
+        String[] locations = timeResponse.getHeader("Location").split("/times/");
+
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
         params.put("date", "2023-08-05");
-        params.put("time", "15:40");
+        params.put("timeId", locations[1]);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -114,7 +122,14 @@ public class MissionStepTest {
 
     @Test
     void 육단계() {
-        jdbcTemplate.update("INSERT INTO reservation (name, date, time) VALUES (?, ?, ?)", "브라운", "2023-08-05", "15:40");
+        Response timeResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(Map.of("time", "15:40"))
+                .when().post("/times");
+
+        String[] locations = timeResponse.getHeader("Location").split("/times/");
+
+        jdbcTemplate.update("INSERT INTO reservation (name, date, time_id) VALUES (?, ?, ?)", "브라운", "2023-08-05", locations[1]);
 
         int size = RestAssured.given().log().all()
                 .when().get("/reservations")
@@ -129,10 +144,17 @@ public class MissionStepTest {
 
     @Test
     void 칠단계() {
+        Response timeResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(Map.of("time", "15:40"))
+                .when().post("/times");
+
+        String[] locations = timeResponse.getHeader("Location").split("/times/");
+
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
         params.put("date", "2023-08-05");
-        params.put("time", "10:00");
+        params.put("timeId", locations[1]);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)

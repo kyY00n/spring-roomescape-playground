@@ -7,9 +7,9 @@ public class Reservation {
     private Long id;
     private final String name;
     private final String date;
-    private final String time;
+    private final Time time;
 
-    public Reservation(final Long id, final String name, final String date, final String time) {
+    public Reservation(final Long id, final String name, final String date, final Time time) {
         this.id = id;
         validate(name, date, time);
         this.name = name;
@@ -17,14 +17,14 @@ public class Reservation {
         this.time = time;
     }
 
-    public Reservation(final String name, final String date, final String time) {
+    public Reservation(final String name, final String date, final Time time) {
         validate(name, date, time);
         this.name = name;
         this.date = date;
         this.time = time;
     }
 
-    private void validate(final String name, final String date, final String time) {
+    private void validate(final String name, final String date, final Time time) {
         if (isEmpty(name) || isEmpty(date) || isEmpty(time)) {
             throw new IllegalArgumentException("예약 정보를 모두 입력해주세요.");
         }
@@ -42,7 +42,7 @@ public class Reservation {
         return date;
     }
 
-    public String getTime() {
+    public Time getTime() {
         return time;
     }
 

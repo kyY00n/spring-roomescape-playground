@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import roomescape.domain.Reservation;
+import roomescape.domain.Time;
 
 @Repository
 public class ReservationDao {
@@ -16,12 +17,13 @@ public class ReservationDao {
             rs.getLong("id"),
             rs.getString("name"),
             rs.getString("date"),
-            rs.getString("time")
+            new Time(rs.getLong("time_id"), rs.getString("time_value"))
     );
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
 
-    public ReservationDao(JdbcTemplate jdbcTemplate) {
+
+    public ReservationDao(JdbcTemplate jdbcTemplate, TimeDao timeDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("reservation")
@@ -29,19 +31,27 @@ public class ReservationDao {
     }
 
     public void insert(Reservation reservation) {
-        Map<String, String> reservationMap = Map.of("name", reservation.getName(), "date", reservation.getDate(), "time",
-                reservation.getTime());
+        Map<String, String> reservationMap = Map.of("name", reservation.getName(), "date", reservation.getDate(), "time_id",
+                reservation.getTime().getId().toString());
         Number key = simpleJdbcInsert.executeAndReturnKey(reservationMap);
         reservation.setId(key.longValue());
     }
 
     public void delete(Long id) {
-        Reservation reservation = selectById(id);
+        Reservation reservation = findById(id);
         jdbcTemplate.update("DELETE FROM reservation WHERE id = ?", reservation.getId());
     }
 
-    public List<Reservation> selectAll() {
-        return jdbcTemplate.query("SELECT * FROM reservation",
+    public List<Reservation> findAll() {
+        return jdbcTemplate.query("""
+                                  SELECT
+                                  r.id as reservation_id,
+                                  r.name,
+                                  r.date,
+                                  t.id as time_id,
+                                  t.time as time_value
+                              FROM reservation as r inner join time as t on r.time_id = t.id
+                        """,
                 RESERVATION_ROW_MAPPER);
     }
 
@@ -50,9 +60,18 @@ public class ReservationDao {
                 reservation.getName(), reservation.getDate(), reservation.getTime(), reservation.getId());
     }
 
-    public Reservation selectById(Long id) {
+    public Reservation findById(Long id) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM reservation WHERE id = ?",
+            return jdbcTemplate.queryForObject("""
+                                      SELECT
+                                      r.id as reservation_id,
+                                      r.name,
+                                      r.date,
+                                      t.id as time_id,
+                                      t.time as time_value
+                                  FROM reservation as r inner join time as t on r.time_id = t.id
+                                  WHERE r.id = ?
+                            """,
                     RESERVATION_ROW_MAPPER, id);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new IllegalArgumentException();
