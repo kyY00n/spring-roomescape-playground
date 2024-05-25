@@ -6,9 +6,7 @@ import io.restassured.response.Response;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,7 +56,7 @@ public class MissionStepTest {
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
         params.put("date", "2023-08-05");
-        params.put("timeId", locations[1]);
+        params.put("time", locations[1]);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -154,7 +152,7 @@ public class MissionStepTest {
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
         params.put("date", "2023-08-05");
-        params.put("timeId", locations[1]);
+        params.put("time", locations[1]);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)

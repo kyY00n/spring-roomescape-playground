@@ -30,20 +30,18 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<ReservationResponseDto> readAllReservations() {
-        return reservationDao.findAll().stream()
-                .map(ReservationResponseDto::from)
-                .collect(toList());
+    public List<Reservation> readAllReservations() {
+        return reservationDao.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponseDto> addReservation(@RequestBody ReservationCreateRequest request) {
-        Time time = timeDao.findById(request.getTimeId()).orElseThrow(IllegalArgumentException::new);
-        Reservation newReservation = new Reservation(request.getName(), request.getDate(), time);
+    public ResponseEntity<Reservation> addReservation(@RequestBody ReservationCreateRequest request) {
+        Time time = timeDao.findById(request.time()).orElseThrow(IllegalArgumentException::new);
+        Reservation newReservation = new Reservation(request.name(), request.date(), time);
         reservationDao.insert(newReservation);
         return ResponseEntity
                 .created(URI.create("/reservations/" + newReservation.getId()))
-                .body(ReservationResponseDto.from(newReservation));
+                .body(newReservation);
     }
 
     @DeleteMapping("/{id}")
