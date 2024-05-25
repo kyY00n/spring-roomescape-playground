@@ -1,51 +1,34 @@
-package roomescape;
+package roomescape.controller;
 
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import roomescape.domain.Reservation;
+import roomescape.dao.ReservationDao;
 
-@Controller
-@RequestMapping("/")
-public class RoomscapeController {
+@RestController
+@RequestMapping("/reservations")
+public class ReservationController {
 
     private final ReservationDao reservationDao;
 
-    public RoomscapeController(final ReservationDao reservationDao) {
+    public ReservationController(final ReservationDao reservationDao) {
         this.reservationDao = reservationDao;
     }
 
     @GetMapping
-    public String home() {
-        return "home";
-    }
-
-    @GetMapping("/reservation")
-    public String admin() {
-        return "reservation";
-    }
-
-    @GetMapping("/time")
-    public String time() {
-        return "time";
-    }
-
-    @ResponseBody
-    @GetMapping("/reservations")
     public List<Reservation> readAllReservations() {
         return reservationDao.selectAll();
     }
 
-    @ResponseBody
-    @PostMapping("/reservations")
+    @PostMapping
     public ResponseEntity<Reservation> addReservation(@RequestBody ReservationCreateRequest request) {
         Reservation newReservation = new Reservation(request.getName(), request.getDate(), request.getTime());
         reservationDao.insert(newReservation);
@@ -54,22 +37,10 @@ public class RoomscapeController {
                 .body(newReservation);
     }
 
-    @ResponseBody
-    @DeleteMapping("/reservations/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity deleteReservation(@PathVariable Long id) {
         reservationDao.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
-
-    @ExceptionHandler(NotFoundReservationException.class)
-    public ResponseEntity handleException(NotFoundReservationException e) {
-        return ResponseEntity.badRequest().build();
-    }
-
 
 }
