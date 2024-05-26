@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import roomescape.NotFoundReservationException;
+import roomescape.NotFoundTimeException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -13,9 +14,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    @ExceptionHandler(NotFoundReservationException.class)
-    public ResponseEntity handleException(NotFoundReservationException e) {
-        return ResponseEntity.badRequest().build();
+    @ExceptionHandler(value = {NotFoundReservationException.class, NotFoundTimeException.class})
+    public ResponseEntity handleNotFoundException(RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
 }

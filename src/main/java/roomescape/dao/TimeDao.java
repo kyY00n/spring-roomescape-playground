@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import roomescape.NotFoundTimeException;
 import roomescape.domain.Time;
 
 @Component
@@ -25,17 +26,17 @@ public class TimeDao {
                 .usingGeneratedKeyColumns("id");
     }
 
-    public Time addTime(final Time time) {
+    public Time insert(final Time time) {
         Long id = simpleJdbcInsert.executeAndReturnKey(new BeanPropertySqlParameterSource(time)).longValue();
         time.setId(id);
         return time;
     }
 
-    public List<Time> findAll() {
+    public List<Time> selectAll() {
         return jdbcTemplate.query("SELECT * FROM time", TIME_ROW_MAPPER);
     }
 
-    public Optional<Time> findById(final Long id) {
+    public Optional<Time> selectBy(final Long id) {
         try {
             Time time = jdbcTemplate.queryForObject("SELECT * FROM time WHERE id = ?", TIME_ROW_MAPPER, id);
             return Optional.of(time);
@@ -44,8 +45,7 @@ public class TimeDao {
         }
     }
 
-    public void deleteById(final Long id) {
-        findById(id).orElseThrow(IllegalArgumentException::new);
+    public void deleteBy(final Long id) {
         jdbcTemplate.update("DELETE from time WHERE id = ?", id);
     }
 

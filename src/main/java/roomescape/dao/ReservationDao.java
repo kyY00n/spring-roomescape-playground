@@ -2,6 +2,7 @@ package roomescape.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,11 +39,10 @@ public class ReservationDao {
     }
 
     public void delete(Long id) {
-        Reservation reservation = findById(id);
-        jdbcTemplate.update("DELETE FROM reservation WHERE id = ?", reservation.getId());
+        jdbcTemplate.update("DELETE FROM reservation WHERE id = ?", id);
     }
 
-    public List<Reservation> findAll() {
+    public List<Reservation> selectAll() {
         return jdbcTemplate.query("""
                                   SELECT
                                   r.id as reservation_id,
@@ -55,14 +55,9 @@ public class ReservationDao {
                 RESERVATION_ROW_MAPPER);
     }
 
-    public void update(Reservation reservation) {
-        jdbcTemplate.update("UPDATE reservation SET name = ?, date = ?, time = ? WHERE id = ?",
-                reservation.getName(), reservation.getDate(), reservation.getTime(), reservation.getId());
-    }
-
-    public Reservation findById(Long id) {
+    public Optional<Reservation> selectBy(Long id) {
         try {
-            return jdbcTemplate.queryForObject("""
+            Reservation reservation = jdbcTemplate.queryForObject("""
                                       SELECT
                                       r.id as reservation_id,
                                       r.name,
@@ -73,8 +68,9 @@ public class ReservationDao {
                                   WHERE r.id = ?
                             """,
                     RESERVATION_ROW_MAPPER, id);
+            return Optional.of(reservation);
         } catch (IncorrectResultSizeDataAccessException e) {
-            throw new IllegalArgumentException();
+            return Optional.empty();
         }
     }
 
